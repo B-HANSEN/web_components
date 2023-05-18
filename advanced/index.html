@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web components - advanced</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body { 
+            font-family: sans-serif;
+            margin: 2rem;;
+        }
+
+    </style>
+    <script src="modal.js"></script>
+</head>
+<body>
+    <uc-modal opened>
+        <p>With your confirmation you agree to pay the full amount.</p>
+    </uc-modal>
+    <p>Please confirm your choice.</p>
+    <button>Show details & confirm</button>
+
+    <script>
+        const confirmButton = document.querySelector('button');
+        const modal = document.querySelector('uc-modal');
+        confirmButton.addEventListener('click', () => {
+
+        })
+    </script>
+</body>
+</html>
