@@ -19,7 +19,8 @@
     <script src="modal.js"></script>
 </head>
 <body>
-    <uc-modal opened>
+    <uc-modal>
+        <h1 slot="title">Please confirm.</h1>
         <p>With your confirmation you agree to pay the full amount.</p>
     </uc-modal>
     <p>Please confirm your choice.</p>
@@ -28,8 +29,19 @@
     <script>
         const confirmButton = document.querySelector('button');
         const modal = document.querySelector('uc-modal');
-        confirmButton.addEventListener('click', () => {
 
+        modal.addEventListener('confirm', () => {
+            console.log('Confirmed...'); // receiving event as triggered from 'this' = instance of custom element
+        });
+
+        modal.addEventListener('cancel', () => { // cancel event bubbled up ..
+            console.log('Cancelled...'); // .. and left shadow DOM >> can be handled here
+        })
+
+        confirmButton.addEventListener('click', () => {
+            // modal.setAttribute('opened', '')
+            if(!modal.isOpen) modal.open();
+            console.log('modal is open')
         })
     </script>
 </body>

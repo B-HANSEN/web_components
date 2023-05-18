@@ -2,8 +2,7 @@ class Modal extends HTMLElement {
     constructor() {
       super();
       this.attachShadow({ mode: 'open' });
-    //   this.isOpen = false;
-      this.isOpen = true;
+      this.isOpen = false;
       this.shadowRoot.innerHTML = `
           <style>
               #backdrop {
@@ -70,6 +69,7 @@ class Modal extends HTMLElement {
                   margin: 0 0.25rem;
               }
           </style>
+          
           <div id="backdrop"></div>
           <div id="modal">
               <header>
@@ -84,60 +84,66 @@ class Modal extends HTMLElement {
               </section>
           </div>
       `;
+
+    // Note re. slots: h1 in index.html receive a slot attribute which the template can refer to (named slot)
+    // the other slot does not have a name, so the content that has no slot attribute renders into this default slot 
+
       const slots = this.shadowRoot.querySelectorAll('slot');
-      slots[1].addEventListener('slotchange', event => {
-        console.dir(slots[1].assignedNodes());
+      slots[1].addEventListener('slotchange', event => { // triggered when new content arrives, at first when mounted
+        console.dir(slots[1].assignedNodes()); // if require acccess to projected content into slot, use 'assignedNode()-method'
       });
+      
       const backdrop = this.shadowRoot.querySelector('#backdrop');
       const cancelButton = this.shadowRoot.querySelector('#cancel-btn');
       const confirmButton = this.shadowRoot.querySelector('#confirm-btn');
+
       backdrop.addEventListener('click', this._cancel.bind(this));
       cancelButton.addEventListener('click', this._cancel.bind(this));
       confirmButton.addEventListener('click', this._confirm.bind(this));
-      // cancelButton.addEventListener('cancel', () => {
-      //   console.log('Cancel inside the component');
-      // });
+      cancelButton.addEventListener('cancel', () => {
+        console.log('Cancel inside the component');
+      });
     }
   
-    // attributeChangedCallback(name, oldValue, newValue) {
-    //   if (this.hasAttribute('opened')) {
-    //     this.isOpen = true;
-    //     // this.shadowRoot.querySelector('#backdrop').style.opacity = 1;
-    //     // this.shadowRoot.querySelector('#backdrop').style.pointerEvents = 'all';
-    //     // this.shadowRoot.querySelector('#modal').style.opacity = 1;
-    //     // this.shadowRoot.querySelector('#modal').style.pointerEvents = 'all';
-    //   } else {
-    //     this.isOpen = false;
-    //   }
-    // }
+    attributeChangedCallback(name, oldValue, newValue) { // if only style changes required, handle in style tag
+        if (this.hasAttribute('opened')) {
+            this.isOpen = true;
+        //         this.shadowRoot.querySelector('#backdrop').style.opacity = 1;
+        //         this.shadowRoot.querySelector('#backdrop').style.pointerEvents = 'all';
+        //         this.shadowRoot.querySelector('#modal').style.opacity = 1;
+        //         this.shadowRoot.querySelector('#modal').style.pointerEvents = 'all';
+        } else {
+            this.isOpen = false;
+        }
+    }
   
-    // static get observedAttributes() {
-    //   return ['opened'];
-    // }
+    static get observedAttributes() {
+      return ['opened'];
+    }
   
-    // open() {
-    //   this.setAttribute('opened', '');
-    //   this.isOpen = true;
-    // }
+    open() { // do not set as private, as need to be called from index.html
+      this.setAttribute('opened', '');
+      this.isOpen = true;
+    }
   
-    // hide() {
-    //   if (this.hasAttribute('opened')) {
-    //     this.removeAttribute('opened');
-    //   }
-    //   this.isOpen = false;
-    // }
+    hide() {
+      if (this.hasAttribute('opened')) {
+        this.removeAttribute('opened');
+      }
+      this.isOpen = false; // update property as well
+    }
   
-    // _cancel(event) {
-    //   this.hide();
-    //   const cancelEvent = new Event('cancel', { bubbles: true, composed: true });
-    //   event.target.dispatchEvent(cancelEvent);
-    // }
+    _cancel(event) {
+      this.hide();
+      const cancelEvent = new Event('cancel', { bubbles: true, composed: true }); // event can bubble up and leave shadow DOM
+      event.target.dispatchEvent(cancelEvent); // event on the target, the _cancel event handler (the click event on the button)
+    }
   
-    // _confirm() {
-    //   this.hide();
-    //   const confirmEvent = new Event('confirm');
-    //   this.dispatchEvent(confirmEvent);
-    // }
+    _confirm() { // this would be the standard way to handle, not the way as done in _cancel 
+      this.hide();
+      const confirmEvent = new Event('confirm');
+      this.dispatchEvent(confirmEvent); // event can dispatched from custom element as well
+    }
   }
   
   customElements.define('uc-modal', Modal);
