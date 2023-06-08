@@ -102,7 +102,9 @@ class Tooltip extends HTMLElement {
       this._render();
     }
 
-    _dummyFunction() {}
+    _dummyFunction() {
+      return []
+    }
   }
   
   // register element in DOM
