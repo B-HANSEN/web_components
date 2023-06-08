@@ -101,9 +101,13 @@ class Tooltip extends HTMLElement {
       this._tooltipVisible = false;
       this._render();
     }
+
+    _dummyFunction() {}
   }
   
   // register element in DOM
   customElements.define('uc-tooltip', Tooltip);
   
+
+
 
